@@ -1,4 +1,4 @@
-/* COMP2215 15/16: Task 01---SKELETON */
+/* COMP2215 15/16: Task 01 */
 
 /* For La Fortuna board
 
@@ -67,7 +67,6 @@ void init(void) {
 	PORTB &= ~_BV(PB7);   /* LED off */
 
 	/* ENABLE ENCODER INPUTS AND PULL-UPS */
-    PINE |= _BV(PE4) | _BV(PE5);
     PORTE |= _BV(PE4) | _BV(PE5); 
 
 	/* Timer 0 for switch scan interrupt: */
