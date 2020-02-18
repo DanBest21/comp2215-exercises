@@ -15,7 +15,7 @@ case $FLAG in
                 ;;
         -load)
                 echo "Flashing hex program '$FILE' to board:"
-                dfu-programmer at90usb1286 erase
+                dfu-programmer at90usb1286 erase --force
                 dfu-programmer at90usb1286 flash $FILE_HEAD.hex
                 dfu-programmer at90usb1286 reset
 
