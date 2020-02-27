@@ -19,6 +19,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <math.h>
+#include <sleep.h>
 #include <util/delay.h>
 #include "lcd.h"
 
@@ -51,15 +52,17 @@ int8_t tasksNum = -1;
 
 const double tick_ms = 400.0;        /* Real time between ticks in ms */
 const uint32_t tasksPeriodGCD = 25;  /* Timer tick rate */
-const uint32_t period1 = 29;
-const uint32_t period2 = 77;
-const uint32_t period3 = 162;
+const uint32_t period1 = 25;
+const uint32_t period2 = 50;
+const uint32_t period3 = 75;
+const uint32_t period4 = 150;
+const uint32_t period5 = 250;
 
 int TickFct_1(int state);
 int TickFct_2(int state);
 int TickFct_3(int state);
-
-
+int TickFct_4(int state);
+int TickFct_5(int state);
 
 uint8_t runningTasks[MAX_TASKS+1] = {255}; /* Track running tasks, [0] always idleTask */
 const uint32_t idleTask = 255;             /* 0 highest priority, 255 lowest */
@@ -94,6 +97,11 @@ ISR(TIMER1_COMPA_vect) {
       tasks[i].elapsedTime += tasksPeriodGCD;
    }
 
+   if (runningTasks[currentTask] == idleTask)
+   {
+      sleep_mode();
+   }
+
    display_color(SEA_GREEN, BLACK);
    printf("-");
 
@@ -126,6 +134,7 @@ int main(void) {
    init_lcd();
    init_processor();
 
+   set_sleep_mode();
 
    tasks[++tasksNum].state = -1;
    tasks[tasksNum].period = period1;
@@ -145,12 +154,23 @@ int main(void) {
    tasks[tasksNum].running = 0;
    tasks[tasksNum].TickFct = &TickFct_3;
 
+   tasks[++tasksNum].state = -1;
+   tasks[tasksNum].period = period4;
+   tasks[tasksNum].elapsedTime = tasks[tasksNum].period;
+   tasks[tasksNum].running = 0;
+   tasks[tasksNum].TickFct = &TickFct_4;
+
+   tasks[++tasksNum].state = -1;
+   tasks[tasksNum].period = period5;
+   tasks[tasksNum].elapsedTime = tasks[tasksNum].period;
+   tasks[tasksNum].running = 0;
+   tasks[tasksNum].TickFct = &TickFct_5;
+
    sei();
 
    while(1){};
 
 }
-
 
 int TickFct_1(int state) {
 	display_color(CRIMSON, BLACK);
@@ -164,7 +184,7 @@ int TickFct_1(int state) {
 int TickFct_2(int state) {
 	display_color(GOLD, BLACK);
     printf( "[T2<");
-    _delay_ms(600);
+    _delay_ms(50);
     display_color(GOLD, BLACK);
     printf( ">T2]");
     return ++state;
@@ -173,9 +193,27 @@ int TickFct_2(int state) {
 int TickFct_3(int state) {
 	display_color(DARK_CYAN, BLACK);
     printf( "[T3<");
-    _delay_ms(2000);
+    _delay_ms(200);
     display_color(DARK_CYAN, BLACK);
     printf( ">T3]");
+    return ++state;
+}
+
+int TickFct_4(int state) {
+	display_color(SPRING_GREEN, BLACK);
+    printf( "[T4<");
+    _delay_ms(500);
+    display_color(SPRING_GREEN, BLACK);
+    printf( ">T5]");
+    return ++state;
+}
+
+int TickFct_5(int state) {
+	display_color(SALMON, BLACK);
+    printf( "[T5<");
+    _delay_ms(2000);
+    display_color(SALMON, BLACK);
+    printf( ">T5]");
     return ++state;
 }
 
