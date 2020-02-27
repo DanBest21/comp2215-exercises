@@ -17,9 +17,9 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/sleep.h>
 #include <avr/interrupt.h>
 #include <math.h>
-#include <sleep.h>
 #include <util/delay.h>
 #include "lcd.h"
 
@@ -129,12 +129,11 @@ int main(void) {
    CLKPR = (1 << CLKPCE); /* no prescaling for F_CPU */
    CLKPR = 0;
 
-
    LED_INIT;
    init_lcd();
    init_processor();
 
-   set_sleep_mode();
+   set_sleep_mode(SLEEP_MODE_IDLE);
 
    tasks[++tasksNum].state = -1;
    tasks[tasksNum].period = period1;
@@ -204,7 +203,7 @@ int TickFct_4(int state) {
     printf( "[T4<");
     _delay_ms(500);
     display_color(SPRING_GREEN, BLACK);
-    printf( ">T5]");
+    printf( ">T4]");
     return ++state;
 }
 
