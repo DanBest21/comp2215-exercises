@@ -240,10 +240,24 @@ void write(filename fn, uint8_t *buff, uint16_t len)
                         (void *) EEPROM_START, sizeof(metadata));
 }
 
-// TODO: Implement read function.
-void read(filename fn, uint16_t len)
+void read(filename fn, uint8_t *buff, uint16_t len)
 {
+    uint16_t loc;
+    uint16_t idx;
+    block currbl;
 
+    if (fsmeta.dir[fn].currpos == CLOSED_FILE) 
+    {
+	    printf( "ERROR: File %d not open.\n", fn);
+	    return;
+    }
+
+    for (loc=fsmeta.dir[fn].currpos, idx=0; idx < len; idx++, loc++) 
+    {
+	    // Add the contents of the file to the passed buffer.
+        currbl = fsmeta.fat[loc];
+        (*buff + idx) = currbl;
+    }
 }
 
 block getfreeblock(void)
