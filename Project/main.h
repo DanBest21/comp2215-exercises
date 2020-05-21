@@ -1,9 +1,4 @@
-//
-// Created by platelminto on 5/20/20.
-//
-
-#ifndef SNAKE_MAIN_H
-#define SNAKE_MAIN_H
-
-#endif //SNAKE_MAIN_H
+#ifndef TURTLE_MADE_IT_TO_THE_WATER_MAIN_H
+#define TURTLE_MADE_IT_TO_THE_WATER_MAIN_H
+#endif
 

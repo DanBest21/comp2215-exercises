@@ -15,7 +15,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <time.h>
+// #include <time.h>
 #include <stdlib.h>
 #include "lib/lcd/lcd.h"
 #include "lib/rotary/rotary.h"
@@ -26,7 +26,7 @@ typedef int bool;
 
 #define FPS 10
 #define SCREEN_WIDTH 320
-#define DIFFICULTY_TIMER 10000
+#define DIFFICULTY_TIMER 5000
 #define SCREEN_HEIGHT 240
 #define CRAB_WIDTH 50
 #define CRAB_HEIGHT 40
@@ -34,7 +34,7 @@ typedef int bool;
 #define TURTLE_HEIGHT 50
 #define BOTTOM_GAP 10
 #define MAX_TURTLES 5 * 6
-#define MAX_BOLTS 2 * 6
+#define MAX_BOLTS 3 * 6
 #define TRUE  1
 #define FALSE 0
 
@@ -90,7 +90,7 @@ void init(void) {
     TIMSK3 |= _BV(OCIE3A);
 
     /* Set seed for random numbers */
-    srand(time(NULL));
+    // srand(time(NULL));
 }
 
 void draw_crab(uint8_t pos, bool damaged)
@@ -272,7 +272,9 @@ void draw_bolt(uint8_t pos, uint8_t size)
     uint16_t left = pos * CRAB_WIDTH + (CRAB_WIDTH / 2) + 5;
     uint16_t bottom = SCREEN_HEIGHT - BOTTOM_GAP - (CRAB_HEIGHT / 2);
 
-    for (uint8_t i = size; i > 0; i--)
+    uint8_t i;
+
+    for (i = size; i > 0; i--)
     {
         rectangle vertical;
         vertical.left = left - (3 * i);
@@ -435,19 +437,17 @@ ISR(INT6_vect)
 
     if (tick >= 3 && finished == FALSE)
     {
-        spawnTurtles();
-        animateTurtles();
         spawnBolts();
         animateBolts();
-        clear_crab(position);
-        draw_crab(position, damaged);
+        spawnTurtles();
+        animateTurtles();
         draw_info();
 
         tick = 0;
         ++tick3;
     }
 
-    if (tick3 >= 10 && finished == FALSE)
+    if (tick3 >= 3 && finished == FALSE)
     {
         damaged = FALSE;
         tick3 = 0;
@@ -480,7 +480,9 @@ void remove_bolt(struct bolt *array, int index, int array_length)
 
 void animateTurtles(void)
 {
-    for (uint16_t i = 0; i < activeTurtles; i++)
+    uint16_t i;
+
+    for (i = 0; i < activeTurtles; i++)
     {        
         clear_turtle(turtles[i].x, turtles[i].y);
 
@@ -491,7 +493,6 @@ void animateTurtles(void)
             --activeTurtles;
             ++score;
 
-            clear_crab();
             draw_crab(position, FALSE);
         }
         else if (turtles[i].y >= SCREEN_HEIGHT)
@@ -511,7 +512,9 @@ void animateTurtles(void)
 
 void animateBolts(void)
 {
-    for (uint16_t i = 0; i < activeBolts; i++)
+    uint16_t i;
+
+    for (i = 0; i < activeBolts; i++)
     {
         if (++bolts[i].tick >= 50)
         {
@@ -535,8 +538,12 @@ void animateBolts(void)
         }
         else
         {
-            clear_bolt(bolts[i].x);
             draw_bolt(bolts[i].x, bolts[i].size);
+
+            if (bolts[i].x == position)
+            {
+                draw_crab(position, damaged);
+            }
         }
     }
 }
