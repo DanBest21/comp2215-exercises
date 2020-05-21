@@ -19,7 +19,9 @@
 #define RED         0xF800 
 #define DARK_RED    0x7041    
 #define MAGENTA     0xF81F      
-#define YELLOW      0xFFE0      
+#define YELLOW      0xFFE0  
+#define BEIGE		0xE58B
+#define LIGHT_BROWN 0x7B47    
 #define BROWN       0x82C5
 
 typedef enum {North, West, South, East} orientation;

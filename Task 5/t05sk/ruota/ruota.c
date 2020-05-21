@@ -34,6 +34,7 @@ volatile uint8_t switch_rpt;     /* key long press and repeat */
 
 int scan_encoder(int state);
 int scan_switches(int state);
+int freeRam();
 
 
 void os_init_ruota(void) {
@@ -186,3 +187,8 @@ uint8_t get_switch_long( uint8_t switch_mask ) {
   return get_switch_press( get_switch_rpt( switch_mask ));
 }
 
+int freeRam () {
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+}
